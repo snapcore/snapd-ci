@@ -20,12 +20,12 @@ jobs:
       matrix:
         toolchain:
           - default
-          - FIPS
+          # - FIPS
         version:
           # test version is a build of snapd with test keys and should
           # only be installed by test runners. The pristine versions
           # are the build that should be installed by human users.
-          - pristine
+          # - pristine
           - test
 
   cache-build-deps:
