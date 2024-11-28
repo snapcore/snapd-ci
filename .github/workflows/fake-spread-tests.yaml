@@ -1,0 +1,61 @@
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: 'A json list of tags to indicate which runner to use'
+        required: true
+        type: string
+      group:
+        description: 'The name of the group of backends, systems, tests, and rules'
+        required: true
+        type: string
+      backend:
+        description: 'The spread backend to use (for possible values, check spread.yaml)'
+        required: true
+        type: string
+      systems:
+        description: 'The spread system(s) to use (for possible values, check spread.yaml). If more than one, separate them with a space'
+        required: true
+        type: string
+      tasks:
+        description: 'The spread tasks to run. It may be a space-separated list and may contain directories of many tasks or individual ones'
+        required: true
+        type: string
+      rules:
+        description: 'The rule .yaml file to use (found under tests/lib/spread/rules) for test discovery'
+        required: true
+        type: string
+
+
+jobs:
+  run-spread:
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Generate fake spread.json
+      run: |
+        if [[ ${{ inputs.group }} == "nested-ubuntu-24.04" ]]; then
+          mv spread-nested-24.json spread-results.json
+        fi
+
+        if [[ ${{ inputs.group }} == "nested-ubuntu-22.04" ]]; then
+          mv spread-nested-22.json spread-results.json
+        fi
+
+        if [[ ${{ inputs.group }} == "ubuntu-noble" ]]; then
+          mv spread-24.json spread-results.json
+        fi
+
+        if [[ ${{ inputs.group }} == "ubuntu-xenial-bionic" ]]; then
+          mv spread-18.json spread-results.json
+        fi
+
+    - name: Save spread.json as an artifact
+      if: ${{ always() && github.event.number }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: "spread-json-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.group }}" 
+        path: "spread-results.json"
+        if-no-files-found: ignore
