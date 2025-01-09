@@ -53,7 +53,7 @@ jobs:
         fi
 
     - name: Save spread.json as an artifact
-      if: ${{ always() && github.event.number }}
+      if: ${{ always() && github.event.pull_request.number }}
       uses: actions/upload-artifact@v4
       with:
         name: "spread-json-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.group }}" 
