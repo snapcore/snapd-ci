@@ -17,6 +17,8 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Comment on PR
         run: |
           gh pr comment "${{ github.event.pull_request.number }}" --body "Placeholder for spread failures"
