@@ -5,13 +5,26 @@ on:
     workflows: [Tests]
     types:
       - completed
+  pull_request:
+    types: [opened]
 
 jobs:
+  comment-on-pr:
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Comment on PR
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" --body "Placeholder for spread failures"
+
   report-spread-failures:
-    if: ${{ github.event.workflow_run.event == 'pull_request' }}
+    if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions: 
-      actions: write
       pull-requests: write
     env:
       GH_TOKEN: ${{ github.token }}
