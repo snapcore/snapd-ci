@@ -24,7 +24,7 @@ jobs:
   report-spread-failures:
     if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       pull-requests: write
     env:
       GH_TOKEN: ${{ github.token }}
